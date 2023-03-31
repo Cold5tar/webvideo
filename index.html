@@ -39,15 +39,14 @@
       <script>
         const modelViewer = document.querySelector("model-viewer");
         const video = modelViewer.querySelector("video");
-      
+        const texture = new THREE.VideoTexture(video);
+
         modelViewer.addEventListener("model-loaded", () => {
-          const model = modelViewer.querySelector("model");
-          const material = new THREE.MeshBasicMaterial({ map: video.texture });
-          model.traverse((node) => {
-            if (node.isMesh) {
-              node.material = material;
+            const model = modelViewer.querySelector("model");
+            const material = model.materials.find((m) => m.name === "MyMaterialName");
+            if (material) {
+                material.map = texture;
             }
-          });
         });
       </script>
     </model-viewer>
