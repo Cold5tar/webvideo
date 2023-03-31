@@ -8,22 +8,44 @@
   </head>
   <body>
     <model-viewer
-      src="assets/painting.glb"
+      src="path/to/your/model.glb"
       ar
       ar-modes="webxr scene-viewer quick-look"
       ar-scale="fixed"
       environment-image="neutral"
       camera-controls
+      exposure="0.3"
     >
       <video
-        slot="hotspot-1"
-        src="assets/test.mp4"
+        slot="poster"
+        id="video"
         autoplay
         loop
         muted
         playsinline
-      ></video>
+        style="display:none"
+      >
+        <source src="test.mp4" type="video/mp4" />
+      </video>
+      <model-viewer-camera
+        orbit-target="0 0 0"
+        min-camera-orbit="auto 30deg auto"
+        max-camera-orbit="auto 75deg auto"
+        min-field-of-view="10deg"
+        max-field-of-view="60deg"
+        transition-duration="0.7s"
+      ></model-viewer-camera>
       <button slot="ar-button" id="arButton" onclick="window.location.reload()">Restart AR</button>
+      <script>
+        const modelViewer = document.querySelector("model-viewer");
+        const model = modelViewer.querySelector("model");
+        const material = new THREE.MeshBasicMaterial({ map: modelViewer.querySelector("video").texture });
+        model.traverse((node) => {
+          if (node.isMesh) {
+            node.material = material;
+          }
+        });
+      </script>
     </model-viewer>
   </body>
 </html>
