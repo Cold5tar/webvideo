@@ -3,52 +3,89 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AR Cube with Video Texture</title>
+    <title>AR Cube with Image Texture</title>
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"
+          }
+        }
+    </script>
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   </head>
   <body>
-    <model-viewer
-      src="painting.glb"
-      ar
-      ar-modes="webxr scene-viewer quick-look"
-      ar-scale="fixed"
-      environment-image="neutral"
-      camera-controls
-      exposure="0.3"
-    >
-      <video
-        slot="poster"
-        id="video"
-        autoplay
-        loop
-        muted
-        playsinline
-        style="display:none"
-      >
-        <source src="test.mp4" type="video/mp4" />
-      </video>
-      <model-viewer-camera
-        orbit-target="0 0 0"
-        min-camera-orbit="auto 30deg auto"
-        max-camera-orbit="auto 75deg auto"
-        min-field-of-view="10deg"
-        max-field-of-view="60deg"
-        transition-duration="0.7s"
-      ></model-viewer-camera>
-      <script>
-        const modelViewer = document.querySelector("model-viewer");
-        const video = modelViewer.querySelector("video");
-        const texture = new THREE.VideoTexture(video);
-
-        modelViewer.addEventListener("model-loaded", () => {
-            const model = modelViewer.querySelector("model");
-            const material = model.materials.find((m) => m.name === "test");
-            if (material) {
-                material.map = texture;
-            }
-        });
+    <script type="importmap">
+        {
+          "imports": {
+            "model-viewer": "https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"
+          }
+        }
       </script>
-    </model-viewer>
+      
+    <model-viewer id="animated" camera-controls touch-action="pan-y" src="painting.glb" ar alt="A 3D model of a duck">
+        <div class="controls">
+          <p>Texture Type</p>
+          <select id="type">
+            <option value="lottie">Lottie</option>
+            <option value="video">Video</option>
+            <option value="canvas">Canvas</option>
+          </select>
+        </div>
+      </model-viewer>
+      <script type="module">
+      const modelViewerAnimated = document.querySelector("model-viewer#animated");
+      
+      let videoTexture = null;
+      let canvasTexture = null;
+      let lottieTexture = null;
+      
+      customElements.whenDefined('model-viewer').then(() => {
+        videoTexture = modelViewerAnimated.createVideoTexture("test.mp4");
+        videoTexture.rotation.x = Math.PI; // rotate 180 degrees
+        });
+      
+      function getCanvasTexture() {
+        if(canvasTexture) return canvasTexture;
+        canvasTexture = modelViewerAnimated.createCanvasTexture();
+        const canvas = canvasTexture.source.element;
+        canvas.width = 1600;
+        canvas.height = 800;
+        const ctx = canvas.getContext('2d');
+        ctx.font = "250px sans-serif";
+        ctx.fillStyle = "#aaa";
+        ctx.fillText('Canvas 2D!', 0, 400);
+        canvasTexture.source.update();
+        return canvasTexture;
+      }
+      
+      function getLottieTexture() {
+        if(lottieTexture) return lottieTexture;
+        lottieTexture = modelViewerAnimated.createLottieTexture("24017-lottie-logo-animation.json", 2);
+        return lottieTexture;
+      }
+      
+      modelViewerAnimated.addEventListener("load", async () => {
+      
+        const material = modelViewerAnimated.model.materials[1];
+        const {baseColorTexture} = material.pbrMetallicRoughness;
+      
+        baseColorTexture.setTexture(await getLottieTexture());
+      
+        document.querySelector('#type').addEventListener('input', async (event) => {
+          switch(event.target.value){
+            case "video":
+              baseColorTexture.setTexture(videoTexture);
+              break;
+            case "canvas":
+              baseColorTexture.setTexture(getCanvasTexture());
+              break;
+            case "lottie":
+              baseColorTexture.setTexture(await getLottieTexture());
+              break;
+          }
+        });
+      });
+      </script>
   </body>
 </html>
