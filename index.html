@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AR Cube with Video Texture</title>
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   </head>
   <body>
     <model-viewer
-      src="path/to/your/model.glb"
+      src="painting.glb"
       ar
       ar-modes="webxr scene-viewer quick-look"
       ar-scale="fixed"
@@ -35,15 +36,18 @@
         max-field-of-view="60deg"
         transition-duration="0.7s"
       ></model-viewer-camera>
-      <button slot="ar-button" id="arButton" onclick="window.location.reload()">Restart AR</button>
       <script>
         const modelViewer = document.querySelector("model-viewer");
-        const model = modelViewer.querySelector("model");
-        const material = new THREE.MeshBasicMaterial({ map: modelViewer.querySelector("video").texture });
-        model.traverse((node) => {
-          if (node.isMesh) {
-            node.material = material;
-          }
+        const video = modelViewer.querySelector("video");
+      
+        modelViewer.addEventListener("model-loaded", () => {
+          const model = modelViewer.querySelector("model");
+          const material = new THREE.MeshBasicMaterial({ map: video.texture });
+          model.traverse((node) => {
+            if (node.isMesh) {
+              node.material = material;
+            }
+          });
         });
       </script>
     </model-viewer>
