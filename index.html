@@ -15,14 +15,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   </head>
   <body>
-    <script type="importmap">
-        {
-          "imports": {
-            "model-viewer": "https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"
-          }
-        }
-      </script>
-      
     <model-viewer id="animated" camera-controls touch-action="pan-y" src="painting.glb" ar alt="A 3D model of a duck">
         <div class="controls">
           <p>Texture Type</p>
@@ -42,7 +34,6 @@
       
       customElements.whenDefined('model-viewer').then(() => {
         videoTexture = modelViewerAnimated.createVideoTexture("test.mp4");
-        videoTexture.rotation.x = Math.PI; // rotate 180 degrees
         });
       
       function getCanvasTexture() {
@@ -60,8 +51,7 @@
       }
       
       function getLottieTexture() {
-        if(lottieTexture) return lottieTexture;
-        lottieTexture = modelViewerAnimated.createLottieTexture("24017-lottie-logo-animation.json", 2);
+        lottieTexture = modelViewerAnimated.createTexture("test.jpg");
         return lottieTexture;
       }
       
@@ -69,8 +59,6 @@
       
         const material = modelViewerAnimated.model.materials[1];
         const {baseColorTexture} = material.pbrMetallicRoughness;
-      
-        baseColorTexture.setTexture(await getLottieTexture());
       
         document.querySelector('#type').addEventListener('input', async (event) => {
           switch(event.target.value){
@@ -84,6 +72,8 @@
               baseColorTexture.setTexture(await getLottieTexture());
               break;
           }
+          baseColorTexture.rotation = Math.PI / 2;
+          baseColorTexture.needsUpdate = true;
         });
       });
       </script>
