@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AR Cube with Image Texture</title>
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"
+          }
+        }
+    </script>
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  </head>
+  <body>
+    <model-viewer id="animated" camera-controls touch-action="pan-y" src="painting.glb" ar alt="A 3D model of a duck"></model-viewer>
+    <script>
+      const modelViewerAnimated = document.querySelector("model-viewer#animated");
+
+      let videoTexture = null;
+
+      customElements.whenDefined("model-viewer").then(() => {
+        videoTexture = modelViewerAnimated.createVideoTexture("hamzer.mp4");
+
+        modelViewerAnimated.addEventListener("load", async () => {
+          const material = modelViewerAnimated.model.materials[1];
+          const { baseColorTexture } = material.pbrMetallicRoughness;
+
+          // Apply the video texture
+          baseColorTexture.setTexture(videoTexture);
+
+        });
+      });
+    </script>
+  </body>
+</html>
