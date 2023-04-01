@@ -6,7 +6,6 @@
   <title>AR Cube with Rotated Video Texture</title>
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
-  <script src="https://unpkg.com/aframe-extras@^6.1.0/dist/aframe-extras.min.js"></script>
   <style>
     body {
       margin: 0;
@@ -33,13 +32,24 @@
     </a-assets>
     <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"></a-plane>
     <a-entity
+      id="video-box"
       geometry="primitive: box"
-      material-video="src: #video;"
+      material="shader: standard;"
       rotation="0 0 0"
       position="0 0.5 -4"
       scale="1 1 1"
     ></a-entity>
     <a-camera rotation-reader fov="80"></a-camera>
   </a-scene>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const video = document.getElementById("video");
+      const videoBox = document.getElementById("video-box");
+  
+      video.addEventListener("loadeddata", function () {
+        videoBox.setAttribute("material", "src", "#video");
+      });
+    });
+  </script>
 </body>
 </html>
