@@ -42,14 +42,14 @@
     <a-camera rotation-reader fov="80"></a-camera>
   </a-scene>
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const video = document.getElementById("video");
-      const videoBox = document.getElementById("video-box");
-  
-      video.addEventListener("loadeddata", function () {
-        videoBox.setAttribute("material", "src", "#video");
-      });
+  document.addEventListener("DOMContentLoaded", function () {
+    const video = document.getElementById("video");
+    const videoBox = document.getElementById("video-box");
+
+    video.addEventListener("loadeddata", function () {
+      videoBox.setAttribute("material", "src", "#video");
     });
-  </script>
+  });
+</script>
 </body>
 </html>
